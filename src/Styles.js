@@ -116,16 +116,6 @@ export const SLIDER_STYLES = `
     }
 }
 
-/* Анимации для плавного перемещения */
-@keyframes thumbPulse {
-    0% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.1); }
-    100% { transform: translate(-50%, -50%) scale(1); }
-}
-
-.thumb.moving {
-    animation: thumbPulse 0.3s ease;
-}
 
 /* Модификаторы для разных состояний */
 :host([disabled]) .track,

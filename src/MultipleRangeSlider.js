@@ -250,10 +250,6 @@ export class MultipleRangeSlider extends HTMLElement {
         thumb.style.left = `${steppedPercent}%`;
         thumb.querySelector('.value').textContent = steppedValue.toFixed(this.precision);
         thumb.setAttribute('aria-valuenow', steppedValue);
-        
-        // Добавляем класс для анимации
-        thumb.classList.add('moving');
-        setTimeout(() => thumb.classList.remove('moving'), 300);
     }
     
     /**
@@ -278,14 +274,21 @@ export class MultipleRangeSlider extends HTMLElement {
      * Диспатчит событие input
      */
     dispatchInputEvent() {
-        const values = this.getCurrentValues();
-        this.inputManager.updateValues(values);
-        
-        this.dispatchEvent(new CustomEvent('input', {
-            detail: { values },
-            bubbles: true,
-            composed: true
-        }));
+        // Используем throttling для события input
+        if (!this.inputThrottle) {
+            this.inputThrottle = setTimeout(() => {
+                const values = this.getCurrentValues();
+                this.inputManager.updateValues(values);
+                
+                this.dispatchEvent(new CustomEvent('input', {
+                    detail: { values },
+                    bubbles: true,
+                    composed: true
+                }));
+                
+                this.inputThrottle = null;
+            }, 50); // 20 FPS для события input
+        }
     }
     
     /**

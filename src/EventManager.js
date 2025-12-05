@@ -5,7 +5,16 @@
 export class EventManager {
     constructor(slider) {
         this.slider = slider;
-        this.boundHandleMouseUp = this.handleMouseUp.bind(this);
+        // Используем requestAnimationFrame для оптимизации
+        this.rafId = null;
+        this.lastUpdate = 0;
+        this.UPDATE_THROTTLE_MS = 16; // ~60 FPS
+        
+        // Биндим методы для правильного контекста
+        this.handleMouseMove = this.handleMouseMove.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
+        this.handleTouchMove = this.handleTouchMove.bind(this);
+        this.handleTouchEnd = this.handleTouchEnd.bind(this);
     }
     
     /**
@@ -14,7 +23,6 @@ export class EventManager {
     setupEventListeners() {
         this.setupMouseEvents();
         this.setupTouchEvents();
-        this.setupKeyboardEvents();
     }
     
     /**
@@ -24,11 +32,8 @@ export class EventManager {
         const shadowRoot = this.slider.shadowRoot;
         
         shadowRoot.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        shadowRoot.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        // Удаляем mousemove с shadowRoot - вешаем на document
         shadowRoot.addEventListener('mouseup', this.handleMouseUp.bind(this));
-        
-        // Добавляем обработчик для всего документа
-        document.addEventListener('mouseup', this.boundHandleMouseUp);
     }
     
     /**
@@ -38,15 +43,8 @@ export class EventManager {
         const shadowRoot = this.slider.shadowRoot;
         
         shadowRoot.addEventListener('touchstart', this.handleTouchStart.bind(this));
-        shadowRoot.addEventListener('touchmove', this.handleTouchMove.bind(this));
+        // Удаляем touchmove с shadowRoot
         shadowRoot.addEventListener('touchend', this.handleTouchEnd.bind(this));
-        
-        // Предотвращаем прокрутку страницы при взаимодействии со слайдером
-        shadowRoot.addEventListener('touchmove', (e) => {
-            if (this.slider.activeThumb) {
-                e.preventDefault();
-            }
-        }, { passive: false });
     }
     
     /**
@@ -60,28 +58,52 @@ export class EventManager {
     
     /**
      * Обрабатывает нажатие кнопки мыши
+     * @param {MouseEvent} e - событие мыши
      */
     handleMouseDown(e) {
         if (e.target.classList.contains('thumb')) {
             this.slider.activeThumb = e.target;
             this.slider.activeThumb.classList.add('dragging');
             e.preventDefault();
+            
+            // Добавляем глобальные обработчики
+            document.addEventListener('mousemove', this.handleMouseMove);
+            document.addEventListener('mouseup', this.handleMouseUp);
         }
     }
     
     /**
-     * Обрабатывает движение мыши
+     * Обрабатывает движение мыши с throttling
+     * @param {MouseEvent} e - событие мыши
      */
     handleMouseMove(e) {
-        if (this.slider.activeThumb) {
-            this.slider.moveThumb(e.clientX);
+        const now = performance.now();
+        
+        // Используем requestAnimationFrame для оптимизации
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
         }
+        
+        this.rafId = requestAnimationFrame(() => {
+            if (this.slider.activeThumb) {
+                this.slider.moveThumb(e.clientX);
+            }
+        });
     }
     
     /**
      * Обрабатывает отпускание кнопки мыши
      */
     handleMouseUp() {
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = null;
+        }
+        
+        // Убираем глобальные обработчики
+        document.removeEventListener('mousemove', this.handleMouseMove);
+        document.removeEventListener('mouseup', this.handleMouseUp);
+        
         if (this.slider.activeThumb) {
             this.slider.activeThumb.classList.remove('dragging');
             this.slider.activeThumb = null;
@@ -91,28 +113,51 @@ export class EventManager {
     
     /**
      * Обрабатывает начало касания
+     * @param {TouchEvent} e - событие касания
      */
     handleTouchStart(e) {
         if (e.target.classList.contains('thumb')) {
             this.slider.activeThumb = e.target;
             this.slider.activeThumb.classList.add('dragging');
             e.preventDefault();
+            
+            // Добавляем глобальные обработчики
+            document.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+            document.addEventListener('touchend', this.handleTouchEnd);
         }
     }
     
     /**
      * Обрабатывает движение касания
+     * @param {TouchEvent} e - событие касания
      */
     handleTouchMove(e) {
-        if (this.slider.activeThumb && e.touches.length > 0) {
-            this.slider.moveThumb(e.touches[0].clientX);
+        e.preventDefault(); // Предотвращаем скролл страницы
+        
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
         }
+        
+        this.rafId = requestAnimationFrame(() => {
+            if (this.slider.activeThumb && e.touches.length > 0) {
+                this.slider.moveThumb(e.touches[0].clientX);
+            }
+        });
     }
     
     /**
      * Обрабатывает окончание касания
      */
     handleTouchEnd() {
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = null;
+        }
+        
+        // Убираем глобальные обработчики
+        document.removeEventListener('touchmove', this.handleTouchMove);
+        document.removeEventListener('touchend', this.handleTouchEnd);
+        
         if (this.slider.activeThumb) {
             this.slider.activeThumb.classList.remove('dragging');
             this.slider.activeThumb = null;
