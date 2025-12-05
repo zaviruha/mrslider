@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Range Slider Component</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .demo-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #357ae8;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        code {
+            background: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multiple Range Slider Component</h1>
+    
+    <div class="demo-section">
+        <h2>Базовый пример</h2>
+        <form id="basicForm">
+            <zh-mr-slider 
+                id="basicSlider"
+                min="0" 
+                max="100" 
+                values="20,50,80" 
+                name="range" 
+                precision="2" 
+                step="2.2"
+            ></zh-mr-slider>
+            <br>
+            <button type="submit">Отправить форму</button>
+        </form>
+        
+        <div class="controls">
+            <button onclick="getValues()">Получить значения</button>
+            <button onclick="setRandomValues()">Установить случайные значения</button>
+            <button onclick="addThumb()">Добавить бегунок</button>
+            <button onclick="removeThumb()">Удалить бегунок</button>
+            <button onclick="toggleDisabled()">Переключить disabled</button>
+            <button onclick="resetSlider()">Сбросить</button>
+        </div>
+        
+        <div id="basicOutput" class="output">Значения: [20.00, 50.00, 80.00]</div>
+    </div>
+    
+    <div class="demo-section">
+        <h2>Кастомизация стилей</h2>
+        <zh-mr-slider 
+            min="0" 
+            max="500" 
+            values="100,250,400" 
+            name="custom-range"
+            style="--range-color: #ff6b6b; --thumb-border-color: #ff6b6b;"
+        ></zh-mr-slider>
+    </div>
+    
+    <div class="demo-section">
+        <h2>События</h2>
+        <zh-mr-slider 
+            id="eventsSlider"
+            min="0" 
+            max="10" 
+            values="3,7" 
+            name="events-range"
+        ></zh-mr-slider>
+        
+        <div id="eventsOutput" class="output">
+            События будут отображаться здесь...
+        </div>
+    </div>
+    
+    <script type="module">
+        // Импортируем основной компонент
+        import { MultipleRangeSlider } from './../src/MultipleRangeSlider.js';
+        
+        // Получаем элементы
+        const basicSlider = document.getElementById('basicSlider');
+        const basicOutput = document.getElementById('basicOutput');
+        const eventsSlider = document.getElementById('eventsSlider');
+        const eventsOutput = document.getElementById('eventsOutput');
+        const basicForm = document.getElementById('basicForm');
+        
+        // Примеры использования API компонента
+        window.getValues = () => {
+            //const values = basicSlider.currentValues;
+            //basicOutput.textContent = `Значения: [${values.map(v => v.toFixed(2)).join(', ')}]`;
+        };
+        
+        window.setRandomValues = () => {
+            const min = parseInt(basicSlider.getAttribute('min'));
+            const max = parseInt(basicSlider.getAttribute('max'));
+            const count = basicSlider.currentValues.length;
+            
+            const randomValues = Array.from({ length: count }, () => 
+                Math.round((Math.random() * (max - min) + min) * 100) / 100
+            );
+            
+            basicSlider.setValues(randomValues);
+            window.getValues();
+        };
+        
+        window.addThumb = () => {
+            const index = basicSlider.addThumb();
+            basicOutput.textContent = `Добавлен бегунок с индексом ${index}`;
+        };
+        
+        window.removeThumb = () => {
+            const values = basicSlider.currentValues;
+            if (values.length > 2) {
+                basicSlider.removeThumb(values.length - 1);
+                basicOutput.textContent = `Удален последний бегунок`;
+            } else {
+                basicOutput.textContent = `Нельзя удалить бегунок (должно быть минимум 2)`;
+            }
+        };
+        
+        window.toggleDisabled = () => {
+            if (basicSlider.isDisabled) {
+                basicSlider.enable();
+                basicOutput.textContent = 'Слайдер включен';
+            } else {
+                basicSlider.disable();
+                basicOutput.textContent = 'Слайдер отключен';
+            }
+        };
+        
+        window.resetSlider = () => {
+            basicSlider.reset();
+            window.getValues();
+        };
+        
+        // Обработка событий
+        eventsSlider.addEventListener('input', (e) => {
+            eventsOutput.textContent = `input: [${e.detail.values.join(', ')}]`;
+        });
+        
+        eventsSlider.addEventListener('change', (e) => {
+            eventsOutput.textContent += `\nchange: [${e.detail.values.join(', ')}]`;
+        });
+        
+        // Обработка отправки формы
+        basicForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const rangeValues = [];
+            
+            for (const [key, value] of formData.entries()) {
+                if (key.startsWith('range[')) {
+                    rangeValues.push(parseFloat(value));
+                }
+            }
+            
+            rangeValues.sort((a, b) => a - b);
+            
+            alert(`Отправленные значения: ${rangeValues.map(v => v.toFixed(2)).join(', ')}`);
+        });
+        
+        // Инициализация вывода
+        window.getValues();
+    </script>
+</body>
+</html>
