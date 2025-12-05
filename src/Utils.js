@@ -7,7 +7,7 @@ export const DEFAULT_CONFIG = {
     MAX: 100,
     VALUES: [],
     NAME: 'range-values',
-    PRECISION: 1,
+    PRECISION: 0,
     STEP: 0,
     TRACK_HEIGHT: '6px',
     THUMB_SIZE: '20px',

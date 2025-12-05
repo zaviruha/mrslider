@@ -1,0 +1,275 @@
+.header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .header-top h1 {
+        margin: 0;
+    }
+    
+    .theme-toggle {
+        background: none;
+        border: 2px solid #e0e0e0;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #333;
+        transition: all 0.3s ease;
+        padding: 0;
+        flex-shrink: 0;
+    }
+    
+    .theme-toggle:hover {
+        background: #f8f9fa;
+        border-color: #3498db;
+        transform: rotate(15deg) scale(1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .theme-toggle:active {
+        transform: scale(0.95);
+    }
+    
+    /* Темная тема для кнопки */
+    body.dark-theme .theme-toggle {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    body.dark-theme .theme-toggle:hover {
+        background: #374151;
+        border-color: #4299e1;
+    }
+    
+    /* Мобильная адаптация */
+    @media (max-width: 768px) {
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+        
+        .header-top h1 {
+            font-size: 2em;
+        }
+    }
+
+.theme-switcher {
+    margin-top: 15px;
+}
+
+#themeToggle {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    padding: 8px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+#themeToggle:hover {
+    background: white;
+    border-color: #3498db;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+#themeToggle:active {
+    transform: translateY(0);
+}
+
+.theme-icon {
+    font-size: 16px;
+}
+
+.theme-text {
+    transition: opacity 0.3s;
+}
+
+/* Стили для темной темы */
+body.dark-theme {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #e0e0e0;
+}
+
+body.dark-theme header,
+body.dark-theme .demo-card,
+body.dark-theme .description-card {
+    background: #1e293b;
+    color: #e0e0e0;
+}
+
+body.dark-theme .demo-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+}
+
+body.dark-theme .description-card {
+    background: #1e293b;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4 {
+    color: #e2e8f0;
+}
+
+body.dark-theme .description-card h2 {
+    border-bottom-color: #334155;
+}
+
+body.dark-theme .description-card > p {
+    color: #cbd5e1;
+}
+
+body.dark-theme .feature {
+    background: #2d3748;
+    border-left-color: #4299e1;
+    color: #e2e8f0;
+}
+
+body.dark-theme .feature:hover {
+    background: #374151;
+}
+
+body.dark-theme .feature h4 {
+    color: #e2e8f0;
+}
+
+body.dark-theme .feature p {
+    color: #cbd5e1;
+}
+
+body.dark-theme .quick-start {
+    background: #2d3748;
+    border-color: #4a5568;
+}
+
+body.dark-theme .quick-start h3 {
+    color: #e2e8f0;
+}
+
+body.dark-theme .code-snippet {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.dark-theme .demo-description {
+    background: #2d3748;
+    color: #cbd5e1;
+    border-left-color: #4299e1;
+}
+
+body.dark-theme .output {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-theme .simple-log {
+    background: #0f172a;
+    color: #cbd5e1;
+}
+
+body.dark-theme .log-entry {
+    border-bottom-color: #334155;
+}
+
+body.dark-theme button {
+    background: #4299e1;
+    color: white;
+}
+
+body.dark-theme button:hover {
+    background: #3182ce;
+}
+
+body.dark-theme button.secondary {
+    background: #48bb78;
+}
+
+body.dark-theme button.secondary:hover {
+    background: #38a169;
+}
+
+body.dark-theme button.danger {
+    background: #f56565;
+}
+
+body.dark-theme button.danger:hover {
+    background: #e53e3e;
+}
+
+body.dark-theme #themeToggle {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-theme #themeToggle:hover {
+    background: #374151;
+    border-color: #4299e1;
+}
+
+body.dark-theme footer {
+    color: #94a3b8;
+    border-top-color: #334155;
+}
+
+body.dark-theme footer a {
+    color: #60a5fa;
+}
+
+/* Адаптация для системной темы */
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        color: #e0e0e0;
+    }
+    
+    body:not(.light-theme) #themeToggle {
+        background: rgba(30, 41, 59, 0.9);
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    body:not(.light-theme) #themeToggle .theme-text {
+        content: "Светлая тема";
+    }
+    
+    body:not(.light-theme) #themeToggle .theme-icon {
+        content: "☀️";
+    }
+}
+
+/* Для светлой темы принудительно */
+body.light-theme {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #333;
+}
+
+/* Анимация переключения */
+body.theme-transition,
+body.theme-transition * {
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease !important;
+}
