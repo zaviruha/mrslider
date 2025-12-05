@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Range Slider</title>
+    <style>
+        zh-mr-slider {
+            --range-color: #ff6b6b;
+            --thumb-border-color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <form id="zhForm" style="width:400px;">
+        <zh-mr-slider 
+            min="0" 
+            max="100" 
+            values="20,50,80" 
+            name="range" 
+            precision="2" 
+            step="2.2"
+        ></zh-mr-slider>
+        <br>
+        <button type="submit">Отправить форму</button>
+    </form>
+    
+    <script>
+        // Константы для конфигурации компонента
+        const DEFAULT_CONFIG = {
+            MIN: 0,
+            MAX: 100,
+            VALUES: [],
+            NAME: 'range-values',
+            PRECISION: 1,
+            STEP: 0,
+            TRACK_HEIGHT: '6px',
+            THUMB_SIZE: '20px',
+            TRACK_COLOR: '#ddd',
+            RANGE_COLOR: '#4a90e2',
+            THUMB_COLOR: 'white',
+            THUMB_BORDER_COLOR: '#4a90e2',
+            ACTIVE_SHADOW: '0 0 0 5px rgba(74, 144, 226, 0.2)'
+        };
+
+        // Утилиты для работы с числами
+        const NumberUtils = {
+            /**
+             * Округляет значение с учетом шага и точности
+             * @param {number} value - исходное значение
+             * @param {Object} options - параметры округления
+             * @returns {number} округленное значение
+             */
+            roundValue(value, { min = 0, step = 0, precision = 1 } = {}) {
+                let roundedValue = value;
+                
+                if (step > 0) {
+                    const steps = Math.round((value - min) / step);
+                    roundedValue = min + steps * step;
+                }
+                
+                const factor = Math.pow(10, precision);
+                return Math.round(roundedValue * factor) / factor;
+            },
+            
+            /**
+             * Конвертирует значение в процент
+             * @param {number} value - значение
+             * @param {number} min - минимальное значение
+             * @param {number} max - максимальное значение
+             * @returns {number} процент
+             */
+            valueToPercent(value, min, max) {
+                return ((value - min) / (max - min)) * 100;
+            },
+            
+            /**
+             * Конвертирует процент в значение
+             * @param {number} percent - процент
+             * @param {number} min - минимальное значение
+             * @param {number} max - максимальное значение
+             * @returns {number} значение
+             */
+            percentToValue(percent, min, max) {
+                return min + (percent / 100) * (max - min);
+            }
+        };
+
+        // Класс для управления скрытыми полями формы
+        class HiddenInputManager {
+            constructor(sliderElement) {
+                this.slider = sliderElement;
+                this.inputs = [];
+            }
+            
+            /**
+             * Создает скрытые поля ввода
+             * @param {Array<number>} values - значения для полей
+             */
+            createInputs(values) {
+                this.removeInputs();
+                
+                values.forEach((value, index) => {
+                    const input = this.createInput(value, index);
+                    this.slider.appendChild(input);
+                    this.inputs.push(input);
+                });
+            }
+            
+            /**
+             * Создает одно скрытое поле
+             * @param {number} value - значение
+             * @param {number} index - индекс
+             * @returns {HTMLInputElement} созданное поле
+             */
+            createInput(value, index) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `${this.slider.name}[${index}]`;
+                input.value = value;
+                return input;
+            }
+            
+            /**
+             * Обновляет значения существующих полей
+             * @param {Array<number>} values - новые значения
+             */
+            updateValues(values) {
+                if (this.inputs.length !== values.length) {
+                    this.createInputs(values);
+                } else {
+                    values.forEach((value, index) => {
+                        this.inputs[index].value = value;
+                    });
+                }
+            }
+            
+            /**
+             * Удаляет все скрытые поля
+             */
+            removeInputs() {
+                this.inputs.forEach(input => {
+                    if (input.parentNode === this.slider) {
+                        this.slider.removeChild(input);
+                    }
+                });
+                this.inputs = [];
+            }
+        }
+
+        // Класс для управления событиями слайдера
+        class EventManager {
+            constructor(slider) {
+                this.slider = slider;
+            }
+            
+            /**
+             * Настраивает все обработчики событий
+             */
+            setupEventListeners() {
+                this.setupMouseEvents();
+                this.setupTouchEvents();
+            }
+            
+            /**
+             * Настраивает обработчики мыши
+             */
+            setupMouseEvents() {
+                const shadowRoot = this.slider.shadowRoot;
+                
+                shadowRoot.addEventListener('mousedown', this.handleMouseDown.bind(this));
+                shadowRoot.addEventListener('mousemove', this.handleMouseMove.bind(this));
+                shadowRoot.addEventListener('mouseup', this.handleMouseUp.bind(this));
+                
+                // Добавляем обработчик для всего документа на случай выхода за пределы слайдера
+                document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+            }
+            
+            /**
+             * Настраивает обработчики касаний
+             */
+            setupTouchEvents() {
+                const shadowRoot = this.slider.shadowRoot;
+                
+                shadowRoot.addEventListener('touchstart', this.handleTouchStart.bind(this));
+                shadowRoot.addEventListener('touchmove', this.handleTouchMove.bind(this));
+                shadowRoot.addEventListener('touchend', this.handleTouchEnd.bind(this));
+            }
+            
+            /**
+             * Обрабатывает нажатие кнопки мыши
+             * @param {MouseEvent} e - событие мыши
+             */
+            handleMouseDown(e) {
+                if (e.target.classList.contains('thumb')) {
+                    this.slider.activeThumb = e.target;
+                    this.slider.activeThumb.classList.add('dragging');
+                    e.preventDefault();
+                }
+            }
+            
+            /**
+             * Обрабатывает движение мыши
+             * @param {MouseEvent} e - событие мыши
+             */
+            handleMouseMove(e) {
+                if (this.slider.activeThumb) {
+                    this.slider.moveThumb(e.clientX);
+                }
+            }
+            
+            /**
+             * Обрабатывает отпускание кнопки мыши
+             */
+            handleMouseUp() {
+                if (this.slider.activeThumb) {
+                    this.slider.activeThumb.classList.remove('dragging');
+                    this.slider.activeThumb = null;
+                    this.slider.dispatchChangeEvent();
+                }
+            }
+            
+            /**
+             * Обрабатывает начало касания
+             * @param {TouchEvent} e - событие касания
+             */
+            handleTouchStart(e) {
+                if (e.target.classList.contains('thumb')) {
+                    this.slider.activeThumb = e.target;
+                    this.slider.activeThumb.classList.add('dragging');
+                    e.preventDefault();
+                }
+            }
+            
+            /**
+             * Обрабатывает движение касания
+             * @param {TouchEvent} e - событие касания
+             */
+            handleTouchMove(e) {
+                if (this.slider.activeThumb && e.touches.length > 0) {
+                    this.slider.moveThumb(e.touches[0].clientX);
+                }
+            }
+            
+            /**
+             * Обрабатывает окончание касания
+             */
+            handleTouchEnd() {
+                if (this.slider.activeThumb) {
+                    this.slider.activeThumb.classList.remove('dragging');
+                    this.slider.activeThumb = null;
+                    this.slider.dispatchChangeEvent();
+                }
+            }
+        }
+
+        // Основной класс слайдера
+        class ZaviruhaMultipleRangeSlider extends HTMLElement {
+            static observedAttributes = ['min', 'max', 'values', 'name', 'precision', 'step'];
+            
+            constructor() {
+                super();
+                
+                // Проверка поддержки Web Components
+                if (!window.customElements || !window.ShadowRoot) {
+                    this.renderFallback();
+                    return;
+                }
+                
+                this.initializeProperties();
+                this.attachShadow({ mode: 'open' });
+            }
+            
+            /**
+             * Инициализирует свойства компонента
+             */
+            initializeProperties() {
+                this.activeThumb = null;
+                this.inputManager = new HiddenInputManager(this);
+                this.eventManager = new EventManager(this);
+                
+                this.min = DEFAULT_CONFIG.MIN;
+                this.max = DEFAULT_CONFIG.MAX;
+                this.values = DEFAULT_CONFIG.VALUES;
+                this.name = DEFAULT_CONFIG.NAME;
+                this.precision = DEFAULT_CONFIG.PRECISION;
+                this.step = DEFAULT_CONFIG.STEP;
+            }
+            
+            connectedCallback() {
+                this.render();
+                this.eventManager.setupEventListeners();
+                this.createHiddenInputs();
+            }
+            
+            disconnectedCallback() {
+                this.inputManager.removeInputs();
+            }
+            
+            attributeChangedCallback(name, oldValue, newValue) {
+                if (oldValue === newValue) return;
+                
+                this.updateAttribute(name, newValue);
+                
+                if (this.isConnected) {
+                    this.render();
+                }
+            }
+            
+            /**
+             * Обновляет атрибут компонента
+             * @param {string} name - имя атрибута
+             * @param {string} value - значение атрибута
+             */
+            updateAttribute(name, value) {
+                const attributeHandlers = {
+                    'values': () => {
+                        this.values = value.split(',').map(Number);
+                    },
+                    'min': () => {
+                        this.min = Number(value);
+                    },
+                    'max': () => {
+                        this.max = Number(value);
+                    },
+                    'name': () => {
+                        this.name = value;
+                    },
+                    'precision': () => {
+                        this.precision = parseInt(value) || DEFAULT_CONFIG.PRECISION;
+                    },
+                    'step': () => {
+                        this.step = Number(value) || DEFAULT_CONFIG.STEP;
+                    }
+                };
+                
+                if (attributeHandlers[name]) {
+                    attributeHandlers[name]();
+                }
+            }
+            
+            /**
+             * Возвращает CSS переменные для стилей
+             * @returns {string} CSS переменные
+             */
+            getCssVariables() {
+                return `
+                    :host {
+                        --track-height: ${DEFAULT_CONFIG.TRACK_HEIGHT};
+                        --thumb-size: ${DEFAULT_CONFIG.THUMB_SIZE};
+                        --track-color: ${DEFAULT_CONFIG.TRACK_COLOR};
+                        --range-color: ${this.getAttribute('range-color') || DEFAULT_CONFIG.RANGE_COLOR};
+                        --thumb-color: ${DEFAULT_CONFIG.THUMB_COLOR};
+                        --thumb-border-color: ${this.getAttribute('thumb-border-color') || DEFAULT_CONFIG.THUMB_BORDER_COLOR};
+                        --active-shadow: ${DEFAULT_CONFIG.ACTIVE_SHADOW};
+                        display: block;
+                        position: relative;
+                        height: 30px;
+                        margin: 20px 0;
+                        touch-action: none;
+                    }
+                `;
+            }
+            
+            /**
+             * Возвращает базовые стили компонента
+             * @returns {string} CSS стили
+             */
+            getBaseStyles() {
+                return `
+                    ${this.getCssVariables()}
+                    
+                    .track {
+                        position: absolute;
+                        top: 50%;
+                        left: 0;
+                        right: 0;
+                        height: var(--track-height);
+                        background: var(--track-color);
+                        border-radius: 3px;
+                        transform: translateY(-50%);
+                        cursor: pointer;
+                    }
+                    
+                    .range {
+                        position: absolute;
+                        height: var(--track-height);
+                        background: var(--range-color);
+                        border-radius: 3px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+                    
+                    .thumb {
+                        position: absolute;
+                        width: var(--thumb-size);
+                        height: var(--thumb-size);
+                        background: var(--thumb-color);
+                        border: 2px solid var(--thumb-border-color);
+                        border-radius: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        cursor: grab;
+                        z-index: 2;
+                        transition: transform 0.1s ease, box-shadow 0.2s ease;
+                        outline: none;
+                    }
+                    
+                    .thumb:hover {
+                        transform: translate(-50%, -50%) scale(1.1);
+                    }
+                    
+                    .thumb:active,
+                    .thumb.dragging {
+                        cursor: grabbing;
+                        transform: translate(-50%, -50%) scale(1.2);
+                        box-shadow: var(--active-shadow);
+                    }
+                    
+                    .thumb:focus {
+                        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.5);
+                    }
+                    
+                    .value {
+                        position: absolute;
+                        top: -25px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        font-size: 12px;
+                        font-family: Arial, sans-serif;
+                        color: #333;
+                        background: white;
+                        padding: 2px 6px;
+                        border-radius: 3px;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                        white-space: nowrap;
+                        pointer-events: none;
+                    }
+                    
+                    .value::after {
+                        content: '';
+                        position: absolute;
+                        bottom: -4px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        border-left: 4px solid transparent;
+                        border-right: 4px solid transparent;
+                        border-top: 4px solid white;
+                    }
+                    
+                    @media (prefers-color-scheme: dark) {
+                        :host {
+                            --track-color: #444;
+                        }
+                        
+                        .value {
+                            background: #333;
+                            color: white;
+                        }
+                        
+                        .value::after {
+                            border-top-color: #333;
+                        }
+                    }
+                `;
+            }
+            
+            /**
+             * Рендерит компонент
+             */
+            render() {
+                const values = this.getDisplayValues();
+                const thumbsHTML = this.generateThumbsHTML(values);
+                
+                this.shadowRoot.innerHTML = `
+                    <style>${this.getBaseStyles()}</style>
+                    <div class="track"></div>
+                    <div class="range"></div>
+                    ${thumbsHTML}
+                `;
+                
+                this.updateRange();
+            }
+            
+            /**
+             * Возвращает значения для отображения
+             * @returns {Array<number>} значения слайдеров
+             */
+            getDisplayValues() {
+                if (this.values.length > 0) {
+                    return this.values;
+                }
+                
+                // Значения по умолчанию
+                const quarter = this.min + (this.max - this.min) * 0.25;
+                const threeQuarters = this.min + (this.max - this.min) * 0.75;
+                return [quarter, threeQuarters];
+            }
+            
+            /**
+             * Генерирует HTML для бегунков
+             * @param {Array<number>} values - значения
+             * @returns {string} HTML бегунков
+             */
+            generateThumbsHTML(values) {
+                const roundedValues = values.map(value => this.roundValue(value));
+                
+                return roundedValues.map((value, index) => {
+                    const percent = NumberUtils.valueToPercent(value, this.min, this.max);
+                    
+                    return `
+                        <div class="thumb" 
+                             data-index="${index}" 
+                             style="left: ${percent}%"
+                             tabindex="0"
+                             role="slider"
+                             aria-valuemin="${this.min}"
+                             aria-valuemax="${this.max}"
+                             aria-valuenow="${value}"
+                             aria-label="Слайдер ${index + 1}">
+                            <div class="value">${value.toFixed(this.precision)}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            /**
+             * Округляет значение
+             * @param {number} value - исходное значение
+             * @returns {number} округленное значение
+             */
+            roundValue(value) {
+                return NumberUtils.roundValue(value, {
+                    min: this.min,
+                    step: this.step,
+                    precision: this.precision
+                });
+            }
+            
+            /**
+             * Создает скрытые поля ввода
+             */
+            createHiddenInputs() {
+                const values = this.getCurrentValues();
+                this.inputManager.createInputs(values);
+            }
+            
+            /**
+             * Обновляет диапазон между бегунками
+             */
+            updateRange() {
+                const range = this.shadowRoot.querySelector('.range');
+                const thumbs = Array.from(this.shadowRoot.querySelectorAll('.thumb'));
+                
+                if (thumbs.length < 2) return;
+                
+                const sortedValues = thumbs.map(thumb => {
+                    const percent = parseFloat(thumb.style.left);
+                    return NumberUtils.percentToValue(percent, this.min, this.max);
+                }).sort((a, b) => a - b);
+                
+                const leftPercent = NumberUtils.valueToPercent(sortedValues[0], this.min, this.max);
+                const rightPercent = NumberUtils.valueToPercent(sortedValues[sortedValues.length - 1], this.min, this.max);
+                
+                range.style.left = `${leftPercent}%`;
+                range.style.width = `${rightPercent - leftPercent}%`;
+            }
+            
+            /**
+             * Перемещает бегунок
+             * @param {number} clientX - координата X
+             */
+            moveThumb(clientX) {
+                const rect = this.getBoundingClientRect();
+                const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+                const percent = (x / rect.width) * 100;
+                
+                this.updateThumbPosition(this.activeThumb, percent);
+                this.updateRange();
+                this.dispatchInputEvent();
+            }
+            
+            /**
+             * Обновляет позицию бегунка
+             * @param {HTMLElement} thumb - элемент бегунка
+             * @param {number} percent - процентное положение
+             */
+            updateThumbPosition(thumb, percent) {
+                const rawValue = NumberUtils.percentToValue(percent, this.min, this.max);
+                const steppedValue = this.roundValue(rawValue);
+                const steppedPercent = NumberUtils.valueToPercent(steppedValue, this.min, this.max);
+                
+                thumb.style.left = `${steppedPercent}%`;
+                thumb.querySelector('.value').textContent = steppedValue.toFixed(this.precision);
+                thumb.setAttribute('aria-valuenow', steppedValue);
+            }
+            
+            /**
+             * Диспатчит событие input
+             */
+            dispatchInputEvent() {
+                const values = this.getCurrentValues();
+                this.inputManager.updateValues(values);
+                
+                this.dispatchEvent(new CustomEvent('input', {
+                    detail: { values },
+                    bubbles: true,
+                    composed: true
+                }));
+            }
+            
+            /**
+             * Диспатчит событие change
+             */
+            dispatchChangeEvent() {
+                const values = this.getCurrentValues();
+                this.inputManager.updateValues(values);
+                
+                this.dispatchEvent(new CustomEvent('change', {
+                    detail: { values },
+                    bubbles: true,
+                    composed: true
+                }));
+            }
+            
+            /**
+             * Возвращает текущие значения слайдера
+             * @returns {Array<number>} текущие значения
+             */
+            getCurrentValues() {
+                const thumbs = Array.from(this.shadowRoot.querySelectorAll('.thumb'));
+                
+                return thumbs.map(thumb => {
+                    const percent = parseFloat(thumb.style.left);
+                    const rawValue = NumberUtils.percentToValue(percent, this.min, this.max);
+                    return this.roundValue(rawValue);
+                });
+            }
+            
+            /**
+             * Устанавливает новые значения
+             * @param {Array<number>} newValues - новые значения
+             */
+            setValues(newValues) {
+                this.values = newValues.map(value => this.roundValue(value));
+                this.render();
+                this.createHiddenInputs();
+            }
+            
+            /**
+             * Рендерит fallback для старых браузеров
+             */
+            renderFallback() {
+                this.innerHTML = `
+                    <div style="padding: 20px; background: #f0f0f0; border-radius: 4px;">
+                        <p style="margin: 0; color: #333;">
+                            Ваш браузер не поддерживает современные технологии.<br>
+                            Пожалуйста, обновите браузер или используйте другой.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Регистрация кастомного элемента
+        customElements.define('zh-mr-slider', ZaviruhaMultipleRangeSlider);
+        
+        // Пример использования с формой
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('zhForm');
+            const slider = document.querySelector('zh-mr-slider');
+            
+            // Подписка на события слайдера
+            slider.addEventListener('input', (e) => {
+                console.log('Текущие значения:', e.detail.values);
+            });
+            
+            slider.addEventListener('change', (e) => {
+                console.log('Финальные значения:', e.detail.values);
+            });
+            
+            // Обработка отправки формы
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const rangeValues = [];
+                
+                // Собираем значения слайдера
+                for (const [key, value] of formData.entries()) {
+                    if (key.startsWith('range[')) {
+                        rangeValues.push(parseFloat(value));
+                    }
+                }
+                
+                // Сортировка для удобства отображения
+                rangeValues.sort((a, b) => a - b);
+                
+                console.log('Отправленные значения слайдера:', rangeValues);
+                alert('Значения отправлены: ' + rangeValues.join(', '));
+            });
+        });
+    </script>
+</body>
+</html>
