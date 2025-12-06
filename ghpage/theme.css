@@ -278,3 +278,7 @@ body.dark-theme .tab.active {
     color: #333;
     border-bottom-color: #60a5fa;
 }
+
+body.dark-theme .slider-container {
+    background: #0f172a;
+}

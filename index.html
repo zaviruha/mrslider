@@ -20,90 +20,6 @@
             ⭐ Star on GitHub
         </a>
     </header>
-    <div class="component-description">
-        <div class="description-card">
-            <h2>🎯 О компоненте</h2>
-            <p><strong>Ugo Multiple Range Slider</strong> — это кастомный Web Component для создания слайдеров с несколькими бегунками. Компонент полностью нативен (не требует библиотек), доступен и поддерживает все современные браузеры.</p>
-            
-            <div class="features-grid">
-                <div class="feature">
-                    <div class="feature-icon">🎛️</div>
-                    <h4>Несколько бегунков</h4>
-                    <p>От 2 до любого количества точек на одном слайдере</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">♿</div>
-                    <h4>Полная доступность</h4>
-                    <p>ARIA атрибуты, клавиатурное управление, поддержка screen readers</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">📱</div>
-                    <h4>Мобильная поддержка</h4>
-                    <p>Touch events, адаптивный дизайн, жесты</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🎨</div>
-                    <h4>CSS Кастомизация</h4>
-                    <p>Настройка через CSS переменные и атрибуты</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">📋</div>
-                    <h4>Работа с формами</h4>
-                    <p>Автоматические hidden inputs, имя для полей формы</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">📡</div>
-                    <h4>События</h4>
-                    <p>События input и change с передачей значений</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🎯</div>
-                    <h4>Настройка точности</h4>
-                    <p>Контроль округления значений через precision</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">📏</div>
-                    <h4>Шаг значений</h4>
-                    <p>Ограничение движения бегунков шагом (step)</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🌙</div>
-                    <h4>Темная тема</h4>
-                    <p>Автоматическая поддержка prefers-color-scheme</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">⚡</div>
-                    <h4>Высокая производительность</h4>
-                    <p>Нативный Web Component, нет зависимостей</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🔧</div>
-                    <h4>JavaScript API</h4>
-                    <p>Методы для программного управления значениями</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🔄</div>
-                    <h4>Динамическое изменение</h4>
-                    <p>Добавление/удаление бегунков в runtime</p>
-                </div>
-            </div>
-            
-            <div class="quick-start">
-                <h3>🚀 Быстрый старт</h3>
-                <div class="code-snippet">
-                    <code>&lt;!-- Базовое использование --&gt;
-    &lt;ugo-mr-slider 
-    min="0"
-    max="100" 
-    values="20,50,80"
-    name="range"
-    precision="2"
-    step="1"
-    &gt;&lt;/ugo-mr-slider&gt;</code>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="container">
         <div class="demo-card">
             <h3>📱 Демо 1: Базовый слайдер</h3>
@@ -196,21 +112,98 @@
         </div>
     </div>
 
+<div class="component-description">
+        <div class="description-card">
+            <h2>🎯 О компоненте</h2>
+            <p><strong>Ugo Multiple Range Slider</strong> — это кастомный Web Component для создания слайдеров с несколькими бегунками. Компонент полностью нативен (не требует библиотек), доступен и поддерживает все современные браузеры.</p>
+            <div class="features-compact">
+            <div class="features-column">
+                <div class="feature-item">
+                <div class="feature-emoji">🎛️</div>
+                <div>
+                    <h4>Множественные бегунки</h4>
+                    <p>Создавайте слайдеры с любым количеством контрольных точек — от 2 до неограниченного числа. Каждый бегунок независим и может перемещаться отдельно, позволяя выбирать несколько значений одновременно.</p>
+                </div>
+                </div>
+                <div class="feature-item">
+                <div class="feature-emoji">⚙️</div>
+                <div>
+                    <h4>Программное управление</h4>
+                    <p>Полный JavaScript API: setValues(), addThumb(), removeThumb(), enable()/disable() и другие методы для динамического контроля.</p>
+                </div>
+                </div>
+
+                
+                <div class="feature-item">
+                <div class="feature-emoji">📊</div>
+                <div>
+                    <h4>Точность и шаг значений</h4>
+                    <p>Контроль округления через атрибут precision (0-3 знака после запятой) и ограничение шага движения через step для точного управления значениями.</p>
+                </div>
+                </div>
+                
+                <div class="feature-item">
+                <div class="feature-emoji">📝</div>
+                <div>
+                    <h4>Интеграция с формами</h4>
+                    <p>Автоматическое создание скрытых полей ввода (hidden inputs), поддержка массивов значений, совместимость с любыми фреймворками и библиотеками форм.</p>
+                </div>
+                </div>
+            </div>
+            
+            <div class="features-column">
+                <div class="feature-item">
+                <div class="feature-emoji">🎨</div>
+                <div>
+                    <h4>Гибкая кастомизация</h4>
+                    <p>Настройте внешний вид через CSS Custom Properties: цвета, размеры, тени и анимации. Полный контроль над стилизацией для идеального соответствия вашему дизайну.</p>
+                </div>
+                </div>
+                <div class="feature-item">
+                <div class="feature-emoji">♿</div>
+                <div>
+                    <h4>Полная доступность (a11y)</h4>
+                    <p>Встроенная поддержка ARIA атрибутов, управление с клавиатуры (стрелки, Home, End), совместимость со screen readers. Компонент соответствует стандартам доступности WCAG 2.1.</p>
+                </div>
+                </div>
+                
+                <div class="feature-item">
+                <div class="feature-emoji">🌓</div>
+                <div>
+                    <h4>Темная/светлая тема</h4>
+                    <p>Автоматическая поддержка системных настроек темы через prefers-color-scheme и возможность ручного переключения. Встроенная адаптация стилей для обеих тем.</p>
+                </div>
+                </div>
+                
+                <div class="feature-item">
+                <div class="feature-emoji">📱</div>
+                <div>
+                    <h4>Мобильная оптимизация</h4>
+                    <p>Поддержка touch events для сенсорных экранов, адаптивный дизайн, оптимизация для мобильных устройств. Работает на всех современных смартфонах и планшетах.</p>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
     <div class="tab-container">
         <div class="tabs">
             <button class="tab active" onclick="showTab('usage')">📖 Использование</button>
             <button class="tab" onclick="showTab('api')">🔧 API</button>
-            <button class="tab" onclick="showTab('examples')">💡 Примеры</button>
+            <button class="tab" onclick="showTab('examples')">💡 Кастомизация</button>
         </div>
         
         <div id="usage" class="tab-content active">
             <h3>Быстрый старт</h3>
             <div class="code-block">
                 <code>
-                    <span class="comment">&lt;!-- Подключение компонента --&gt;</span><br>
-                    <span class="highlight">&lt;script </span><span class="attribute">src</span>=<span class="value">"https://cdn.jsdelivr.net/npm/zh-multiple-range-slider@latest/dist/zh-mr-slider.min.js"</span><span class="highlight">&gt;&lt;/script&gt;</span><br><br>
+                    <span class="comment">&lt;!-- Подключение компонента как ES модуля --&gt;</span><br>
+                    <span class="highlight">&lt;script </span><span class="attribute">type</span>=<span class="value">"module"</span><span class="highlight">&gt;</span><br>
+                    &nbsp;&nbsp;<span class="keyword">import</span> { <span class="function">MultipleRangeSlider</span> } <span class="keyword">from</span> <span class="string">'https://cdn.jsdelivr.net/gh/zaviruha/mrslider@master/src/MultipleRangeSlider.js'</span>;<br>
+                    <span class="highlight">&lt;/script&gt;</span><br><br>
                     
-                    <span class="comment">&lt;!-- Использование в HTML --&gt;</span><br>
+                    <span class="comment">&lt;!-- HTML элемент для слайдера --&gt;</span><br>
                     <span class="highlight">&lt;zh-mr-slider</span><br>
                     &nbsp;&nbsp;<span class="attribute">min</span>=<span class="value">"0"</span><br>
                     &nbsp;&nbsp;<span class="attribute">max</span>=<span class="value">"100"</span><br>
