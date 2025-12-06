@@ -367,6 +367,9 @@ export class MultipleRangeSlider extends HTMLElement {
   addThumb(value = null) {
     if (this.isDisabled) return;
 
+    // Синхронизируем значения перед рендером
+    this.values = this.getCurrentValues();
+
     const newValue = value !== null ? value : (this.min + this.max) / 2;
     const roundedValue = this.roundValue(newValue);
 
@@ -383,6 +386,9 @@ export class MultipleRangeSlider extends HTMLElement {
    */
   removeThumb(index) {
     if (this.isDisabled || index < 0 || index >= this.values.length) return;
+
+    // Синхронизируем значения перед рендером
+    this.values = this.getCurrentValues();
 
     this.values.splice(index, 1);
     this.render();
@@ -427,6 +433,9 @@ export class MultipleRangeSlider extends HTMLElement {
   }
 
   disable() {
+    // Синхронизируем значения перед рендером
+    this.values = this.getCurrentValues();
+
     this.disabled = true;
     this.setAttribute("disabled", "");
     this.updateAccessibility();
