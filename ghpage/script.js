@@ -2,7 +2,7 @@
 function getDemo1Values() {
     const slider = document.getElementById('demo1');
     const values = slider.getCurrentValues();
-    document.getElementById('demo1Output').textContent = 
+    document.getElementById('globalLogOutput').textContent = 
         `Значения: [${values.map(v => v.toFixed(2)).join(', ')}]`;
 }
 
@@ -41,10 +41,10 @@ function toggleDemo2Disabled() {
     const slider = document.getElementById('demo2');
     if (slider.isDisabled) {
         slider.enable();
-        document.getElementById('demo2Output').textContent = 'Слайдер включен';
+        document.getElementById('globalLogOutput').textContent = 'Слайдер включен';
     } else {
         slider.disable();
-        document.getElementById('demo2Output').textContent = 'Слайдер выключен';
+        document.getElementById('globalLogOutput').textContent = 'Слайдер выключен';
     }
 }
 
@@ -59,7 +59,7 @@ function demo2Random() {
     );
     
     slider.setValues(randomValues);
-    document.getElementById('demo2Output').textContent = 
+    document.getElementById('globalLogOutput').textContent = 
         `Значения: [${randomValues.join(', ')}]`;
 }
 
@@ -75,14 +75,14 @@ function handleFormSubmit(event) {
     }
     
     values.sort((a, b) => a - b);
-    document.getElementById('demo3Output').textContent = 
+    document.getElementById('globalLogOutput').textContent = 
         `Отправленные значения: ${values.join(', ')}`;
 }
 
 function resetDemo3() {
     const slider = document.getElementById('demo3');
     slider.reset();
-    document.getElementById('demo3Output').textContent = 'Слайдер сброшен';
+    document.getElementById('globalLogOutput').textContent = 'Слайдер сброшен';
 }
 
 const eventLog = [];
@@ -162,20 +162,3 @@ function showTab(tabName) {
     event.target.classList.add('active');
     document.getElementById(tabName).classList.add('active');
 }
-
-// Инициализация демо при загрузке
-document.addEventListener('DOMContentLoaded', () => {
-    // Подписываемся на события demo4
-    const demo4Element = document.getElementById('demo4');
-    if (demo4Element) {
-        demo4Element.addEventListener('input', (e) => {
-            demo4Log.push(`📊 input: [${e.detail.values.join(', ')}]`);
-            updateDemo4Output();
-        });
-        
-        demo4Element.addEventListener('change', (e) => {
-            demo4Log.push(`✅ change: [${e.detail.values.join(', ')}]`);
-            updateDemo4Output();
-        });
-    }
-});

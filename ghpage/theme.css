@@ -62,9 +62,6 @@
         }
     }
 
-.theme-switcher {
-    margin-top: 15px;
-}
 
 #themeToggle {
     background: rgba(255, 255, 255, 0.9);
@@ -95,10 +92,6 @@
 
 .theme-icon {
     font-size: 16px;
-}
-
-.theme-text {
-    transition: opacity 0.3s;
 }
 
 /* Стили для темной темы */
@@ -139,44 +132,6 @@ body.dark-theme .description-card > p {
     color: #cbd5e1;
 }
 
-body.dark-theme .feature {
-    background: #2d3748;
-    border-left-color: #4299e1;
-    color: #e2e8f0;
-}
-
-body.dark-theme .feature:hover {
-    background: #374151;
-}
-
-body.dark-theme .feature h4 {
-    color: #e2e8f0;
-}
-
-body.dark-theme .feature p {
-    color: #cbd5e1;
-}
-
-body.dark-theme .quick-start {
-    background: #2d3748;
-    border-color: #4a5568;
-}
-
-body.dark-theme .quick-start h3 {
-    color: #e2e8f0;
-}
-
-body.dark-theme .code-snippet {
-    background: #0f172a;
-    border-color: #334155;
-}
-
-body.dark-theme .demo-description {
-    background: #2d3748;
-    color: #cbd5e1;
-    border-left-color: #4299e1;
-}
-
 body.dark-theme .output {
     background: #2d3748;
     border-color: #4a5568;
@@ -193,7 +148,7 @@ body.dark-theme .log-entry {
 }
 
 body.dark-theme button {
-    background: #4299e1;
+    /*background: #4299e1;*/
     color: white;
 }
 
@@ -257,6 +212,10 @@ body.dark-theme footer a {
     body:not(.light-theme) #themeToggle .theme-icon {
         content: "☀️";
     }
+
+    .feature-item p {
+        color: #aaa;
+    }
 }
 
 /* Для светлой темы принудительно */
@@ -274,11 +233,37 @@ body.theme-transition * {
                 box-shadow 0.3s ease !important;
 }
 
-body.dark-theme .tab.active {
-    color: #333;
-    border-bottom-color: #60a5fa;
-}
-
 body.dark-theme .slider-container {
     background: #0f172a;
+}
+
+/* Стили для темной темы */
+body.dark-theme .tabs {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+body.dark-theme .tab {
+    color: #94a3b8;
+}
+
+body.dark-theme .tab:hover {
+    color: #60a5fa;
+    background: rgba(30, 41, 59, 0.5);
+}
+
+body.dark-theme .tab.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+}
+
+body.dark-theme .tab.active:hover {
+    background: linear-gradient(135deg, #3182ce 0%, #4299e1 100%);
+}
+
+body.dark-theme .tab-content {
+    background: #1e293b;
+    border-top: 1px solid #334155;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
