@@ -1,277 +1,378 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multiple Range Slider - Zaviruha Component</title>
-    <link href="./ghpage/style.css?v=1.1" type="text/css" rel="stylesheet">
-    <link href="./ghpage/theme.css?v=1.1" type="text/css" rel="stylesheet">
-</head>
-<body>
+    <link href="./ghpage/style.css?v=1.1" type="text/css" rel="stylesheet" />
+    <link href="./ghpage/theme.css?v=1.1" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
     <header>
-        <div class="header-top">
-            <h1>🎛️ Multiple Range Slider</h1>
-            <button id="themeToggle" onclick="toggleTheme()" class="theme-toggle">
-                <span class="theme-icon">🌙</span>
-            </button>
-        </div>
-        <div class="subtitle">Кастомный Web Component для нескольких бегунков</div>
-        <a href="https://github.com/zaviruha/mrslider" class="github-badge" target="_blank">
-            ⭐ Star on GitHub
-        </a>
+      <div class="header-top">
+        <h1>🎛️ Multiple Range Slider</h1>
+        <button id="themeToggle" onclick="toggleTheme()" class="theme-toggle">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+      <div class="subtitle">
+        Кастомный Web Component для нескольких бегунков
+      </div>
+      <a
+        href="https://github.com/zaviruha/mrslider"
+        class="github-badge"
+        target="_blank"
+      >
+        ⭐ Star on GitHub
+      </a>
     </header>
     <div class="container">
-        <div class="demo-card">
-            <h3>📱 Демо 1: Базовый слайдер</h3>
-            <div class="slider-container">
-                <zh-mr-slider 
-                    id="demo1"
-                    min="0" 
-                    max="100" 
-                    values="20,50,80"
-                    name="range1"
-                ></zh-mr-slider>
-            </div>
-            
-            <div class="controls">
-                <button onclick="getDemo1Values()">Получить значения</button>
-                <button class="secondary" onclick="addDemo1Thumb()">Добавить бегунок</button>
-                <button class="danger" onclick="removeDemo1Thumb()">Удалить бегунок</button>
-            </div>
-            
-            <div id="demo1Output" class="output">
-                Значения: [20.00, 50.00, 80.00]
-            </div>
+      <div class="demo-card">
+        <h3>📱 Демо 1: Базовый слайдер</h3>
+        <div class="slider-container">
+          <zh-mr-slider
+            id="demo1"
+            min="0"
+            max="100"
+            values="20,50,80"
+            name="range1"
+          ></zh-mr-slider>
         </div>
 
-        <div class="demo-card">
-            <h3>🎨 Демо 2: Кастомизация</h3>
-            <div class="slider-container">
-                <zh-mr-slider 
-                    id="demo2"
-                    min="0" 
-                    max="500" 
-                    values="100,250,400"
-                    precision="0"
-                    step="50"
-                    style="
-                        --range-color: #ff6b6b;
-                        --thumb-border-color: #ff6b6b;
-                        --track-height: 8px;
-                        --thumb-size: 24px;
-                    "
-                ></zh-mr-slider>
-            </div>
-            
-            <div class="controls">
-                <button onclick="changeDemo2Colors()">Сменить цвет</button>
-                <button class="secondary" onclick="toggleDemo2Disabled()">Вкл/Выкл</button>
-                <button onclick="demo2Random()">Случайные значения</button>
-            </div>
-            
-            <div id="demo2Output" class="output">
-                Значения: [100, 250, 400]
-            </div>
+        <div class="controls">
+          <button onclick="getDemo1Values()">Получить значения</button>
+          <button class="secondary" onclick="addDemo1Thumb()">
+            Добавить бегунок
+          </button>
+          <button class="danger" onclick="removeDemo1Thumb()">
+            Удалить бегунок
+          </button>
         </div>
 
-        <div class="demo-card">
-            <h3>📋 Демо 3: Работа с формой</h3>
-            <form id="demoForm" onsubmit="handleFormSubmit(event)">
-                <div class="slider-container">
-                    <label><strong>Диапазон цены:</strong></label>
-                    <zh-mr-slider 
-                        id="demo3"
-                        min="0" 
-                        max="1000" 
-                        values="200,500,800"
-                        name="price"
-                        precision="0"
-                    ></zh-mr-slider>
-                </div>
-                
-                <div class="controls">
-                    <button type="submit">Отправить форму</button>
-                    <button type="button" onclick="resetDemo3()">Сбросить</button>
-                </div>
-                
-                <div id="demo3Output" class="output">
-                    Отправленные значения появятся здесь...
-                </div>
-            </form>
+        <div id="demo1Output" class="output">
+          Значения: [20.00, 50.00, 80.00]
+        </div>
+      </div>
+
+      <div class="demo-card">
+        <h3>🎨 Демо 2: Кастомизация</h3>
+        <div class="slider-container">
+          <zh-mr-slider
+            id="demo2"
+            min="0"
+            max="500"
+            values="100,250,400"
+            precision="0"
+            step="50"
+            style="
+              --range-color: #ff6b6b;
+              --thumb-border-color: #ff6b6b;
+              --track-height: 8px;
+              --thumb-size: 24px;
+            "
+          ></zh-mr-slider>
         </div>
 
-        <div class="demo-card full-width">
-            <h3>📊 Лог событий (последние 10)</h3>
-            <div id="globalLogOutput" class="output simple-log">
-                Перемещайте бегунки, чтобы увидеть события...
-            </div>
-            <div class="controls">
-                <button onclick="clearLog()">Очистить</button>
-                <button onclick="copyLog()">Копировать</button>
-            </div>
+        <div class="controls">
+          <button onclick="changeDemo2Colors()">Сменить цвет</button>
+          <button class="secondary" onclick="toggleDemo2Disabled()">
+            Вкл/Выкл
+          </button>
+          <button onclick="demo2Random()">Случайные значения</button>
         </div>
+
+        <div id="demo2Output" class="output">Значения: [100, 250, 400]</div>
+      </div>
+
+      <div class="demo-card">
+        <h3>📋 Демо 3: Работа с формой</h3>
+        <form id="demoForm" onsubmit="handleFormSubmit(event)">
+          <div class="slider-container">
+            <label>
+              <strong>Диапазон цены:</strong>
+            </label>
+            <zh-mr-slider
+              id="demo3"
+              min="0"
+              max="1000"
+              values="200,500,800"
+              name="price"
+              precision="0"
+            ></zh-mr-slider>
+          </div>
+
+          <div class="controls">
+            <button type="submit">Отправить форму</button>
+            <button type="button" onclick="resetDemo3()">Сбросить</button>
+          </div>
+
+          <div id="demo3Output" class="output">
+            Отправленные значения появятся здесь...
+          </div>
+        </form>
+      </div>
+
+      <div class="demo-card full-width">
+        <h3>📊 Лог событий (последние 10)</h3>
+        <div id="globalLogOutput" class="output simple-log">
+          Перемещайте бегунки, чтобы увидеть события...
+        </div>
+        <div class="controls">
+          <button onclick="clearLog()">Очистить</button>
+          <button onclick="copyLog()">Копировать</button>
+        </div>
+      </div>
     </div>
 
-<div class="component-description">
-        <div class="description-card">
-            <h2>🎯 О компоненте</h2>
-            <p><strong>Ugo Multiple Range Slider</strong> — это кастомный Web Component для создания слайдеров с несколькими бегунками. Компонент полностью нативен (не требует библиотек), доступен и поддерживает все современные браузеры.</p>
-            <div class="features-compact">
-            <div class="features-column">
-                <div class="feature-item">
-                <div class="feature-emoji">🎛️</div>
-                <div>
-                    <h4>Множественные бегунки</h4>
-                    <p>Создавайте слайдеры с любым количеством контрольных точек — от 2 до неограниченного числа. Каждый бегунок независим и может перемещаться отдельно, позволяя выбирать несколько значений одновременно.</p>
-                </div>
-                </div>
-                <div class="feature-item">
-                <div class="feature-emoji">⚙️</div>
-                <div>
-                    <h4>Программное управление</h4>
-                    <p>Полный JavaScript API: setValues(), addThumb(), removeThumb(), enable()/disable() и другие методы для динамического контроля.</p>
-                </div>
-                </div>
+    <div class="component-description">
+      <div class="description-card">
+        <h2>🎯 О компоненте</h2>
+        <p>
+          <strong>Multiple Range Slider</strong>
+          — это кастомный Web Component для создания слайдеров с несколькими
+          бегунками. Компонент полностью нативен (не требует библиотек),
+          доступен и поддерживает все современные браузеры.
+        </p>
+        <div class="features-compact">
+          <div class="features-column">
+            <div class="feature-item">
+              <div class="feature-emoji">🎛️</div>
+              <div>
+                <h4>Множественные бегунки</h4>
+                <p>
+                  Создавайте слайдеры с любым количеством контрольных точек — от
+                  2 до неограниченного числа. Каждый бегунок независим и может
+                  перемещаться отдельно, позволяя выбирать несколько значений
+                  одновременно.
+                </p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-emoji">⚙️</div>
+              <div>
+                <h4>Программное управление</h4>
+                <p>
+                  Полный JavaScript API: setValues(), addThumb(), removeThumb(),
+                  enable()/disable() и другие методы для динамического контроля.
+                </p>
+              </div>
+            </div>
 
-                
-                <div class="feature-item">
-                <div class="feature-emoji">📊</div>
-                <div>
-                    <h4>Точность и шаг значений</h4>
-                    <p>Контроль округления через атрибут precision (0-3 знака после запятой) и ограничение шага движения через step для точного управления значениями.</p>
-                </div>
-                </div>
-                
-                <div class="feature-item">
-                <div class="feature-emoji">📝</div>
-                <div>
-                    <h4>Интеграция с формами</h4>
-                    <p>Автоматическое создание скрытых полей ввода (hidden inputs), поддержка массивов значений, совместимость с любыми фреймворками и библиотеками форм.</p>
-                </div>
-                </div>
+            <div class="feature-item">
+              <div class="feature-emoji">📊</div>
+              <div>
+                <h4>Точность и шаг значений</h4>
+                <p>
+                  Контроль округления через атрибут precision (0-3 знака после
+                  запятой) и ограничение шага движения через step для точного
+                  управления значениями.
+                </p>
+              </div>
             </div>
-            
-            <div class="features-column">
-                <div class="feature-item">
-                <div class="feature-emoji">🎨</div>
-                <div>
-                    <h4>Гибкая кастомизация</h4>
-                    <p>Настройте внешний вид через CSS Custom Properties: цвета, размеры, тени и анимации. Полный контроль над стилизацией для идеального соответствия вашему дизайну.</p>
-                </div>
-                </div>
-                <div class="feature-item">
-                <div class="feature-emoji">♿</div>
-                <div>
-                    <h4>Полная доступность (a11y)</h4>
-                    <p>Встроенная поддержка ARIA атрибутов, управление с клавиатуры (стрелки, Home, End), совместимость со screen readers. Компонент соответствует стандартам доступности WCAG 2.1.</p>
-                </div>
-                </div>
-                
-                <div class="feature-item">
-                <div class="feature-emoji">🌓</div>
-                <div>
-                    <h4>Темная/светлая тема</h4>
-                    <p>Автоматическая поддержка системных настроек темы через prefers-color-scheme и возможность ручного переключения. Встроенная адаптация стилей для обеих тем.</p>
-                </div>
-                </div>
-                
-                <div class="feature-item">
-                <div class="feature-emoji">📱</div>
-                <div>
-                    <h4>Мобильная оптимизация</h4>
-                    <p>Поддержка touch events для сенсорных экранов, адаптивный дизайн, оптимизация для мобильных устройств. Работает на всех современных смартфонах и планшетах.</p>
-                </div>
-                </div>
+
+            <div class="feature-item">
+              <div class="feature-emoji">📝</div>
+              <div>
+                <h4>Интеграция с формами</h4>
+                <p>
+                  Автоматическое создание скрытых полей ввода (hidden inputs),
+                  поддержка массивов значений, совместимость с любыми
+                  фреймворками и библиотеками форм.
+                </p>
+              </div>
             </div>
+          </div>
+
+          <div class="features-column">
+            <div class="feature-item">
+              <div class="feature-emoji">🎨</div>
+              <div>
+                <h4>Гибкая кастомизация</h4>
+                <p>
+                  Настройте внешний вид через CSS Custom Properties: цвета,
+                  размеры, тени и анимации. Полный контроль над стилизацией для
+                  идеального соответствия вашему дизайну.
+                </p>
+              </div>
             </div>
+            <div class="feature-item">
+              <div class="feature-emoji">♿</div>
+              <div>
+                <h4>Полная доступность (a11y)</h4>
+                <p>
+                  Встроенная поддержка ARIA атрибутов, управление с клавиатуры
+                  (стрелки, Home, End), совместимость со screen readers.
+                  Компонент соответствует стандартам доступности WCAG 2.1.
+                </p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-emoji">🌓</div>
+              <div>
+                <h4>Темная/светлая тема</h4>
+                <p>
+                  Автоматическая поддержка системных настроек темы через
+                  prefers-color-scheme и возможность ручного переключения.
+                  Встроенная адаптация стилей для обеих тем.
+                </p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-emoji">📱</div>
+              <div>
+                <h4>Мобильная оптимизация</h4>
+                <p>
+                  Поддержка touch events для сенсорных экранов, адаптивный
+                  дизайн, оптимизация для мобильных устройств. Работает на всех
+                  современных смартфонах и планшетах.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
     <div class="tab-container">
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('usage')">📖 Использование</button>
-            <button class="tab" onclick="showTab('api')">🔧 API</button>
-            <button class="tab" onclick="showTab('examples')">💡 Кастомизация</button>
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('usage')">
+          📖 Использование
+        </button>
+        <button class="tab" onclick="showTab('api')">🔧 API</button>
+        <button class="tab" onclick="showTab('examples')">
+          💡 Кастомизация
+        </button>
+      </div>
+
+      <div id="usage" class="tab-content active">
+        <h3>Быстрый старт</h3>
+        <div class="code-block">
+          <code>
+            <span class="comment"
+              >&lt;!-- Подключение компонента как ES модуля --&gt;</span
+            ><br />
+            <span class="highlight">&lt;script </span>
+            <span class="attribute">type</span>=<span class="value"
+              >"module"</span
+            >
+            <span class="highlight">&gt;</span><br />
+            &nbsp;&nbsp;<span class="keyword">import</span>
+            {
+            <span class="function">MultipleRangeSlider</span>
+            }
+            <span class="keyword">from</span>
+            <span class="string"
+              >'https://cdn.jsdelivr.net/gh/zaviruha/mrslider@master/src/MultipleRangeSlider.js'</span
+            >;<br />
+            <span class="highlight">&lt;/script&gt;</span><br /><br />
+
+            <span class="comment">&lt;!-- HTML элемент для слайдера --&gt;</span
+            ><br />
+            <span class="highlight">&lt;zh-mr-slider</span><br />
+            &nbsp;&nbsp;<span class="attribute">min</span>=<span class="value"
+              >"0"</span
+            ><br />
+            &nbsp;&nbsp;<span class="attribute">max</span>=<span class="value"
+              >"100"</span
+            ><br />
+            &nbsp;&nbsp;<span class="attribute">values</span>=<span
+              class="value"
+              >"20,50,80"</span
+            ><br />
+            &nbsp;&nbsp;<span class="attribute">name</span>=<span class="value"
+              >"range"</span
+            ><br />
+            &nbsp;&nbsp;<span class="attribute">precision</span>=<span
+              class="value"
+              >"2"</span
+            ><br />
+            &nbsp;&nbsp;<span class="attribute">step</span>=<span class="value"
+              >"1"</span
+            ><br />
+            <span class="highlight">&gt;&lt;/zh-mr-slider&gt;</span>
+          </code>
         </div>
-        
-        <div id="usage" class="tab-content active">
-            <h3>Быстрый старт</h3>
-            <div class="code-block">
-                <code>
-                    <span class="comment">&lt;!-- Подключение компонента как ES модуля --&gt;</span><br>
-                    <span class="highlight">&lt;script </span><span class="attribute">type</span>=<span class="value">"module"</span><span class="highlight">&gt;</span><br>
-                    &nbsp;&nbsp;<span class="keyword">import</span> { <span class="function">MultipleRangeSlider</span> } <span class="keyword">from</span> <span class="string">'https://cdn.jsdelivr.net/gh/zaviruha/mrslider@master/src/MultipleRangeSlider.js'</span>;<br>
-                    <span class="highlight">&lt;/script&gt;</span><br><br>
-                    
-                    <span class="comment">&lt;!-- HTML элемент для слайдера --&gt;</span><br>
-                    <span class="highlight">&lt;zh-mr-slider</span><br>
-                    &nbsp;&nbsp;<span class="attribute">min</span>=<span class="value">"0"</span><br>
-                    &nbsp;&nbsp;<span class="attribute">max</span>=<span class="value">"100"</span><br>
-                    &nbsp;&nbsp;<span class="attribute">values</span>=<span class="value">"20,50,80"</span><br>
-                    &nbsp;&nbsp;<span class="attribute">name</span>=<span class="value">"range"</span><br>
-                    &nbsp;&nbsp;<span class="attribute">precision</span>=<span class="value">"2"</span><br>
-                    &nbsp;&nbsp;<span class="attribute">step</span>=<span class="value">"1"</span><br>
-                    <span class="highlight">&gt;&lt;/zh-mr-slider&gt;</span>
-                </code>
-            </div>
+      </div>
+
+      <div id="api" class="tab-content">
+        <h3>JavaScript API</h3>
+        <div class="code-block">
+          <code>
+            <span class="comment">// Получение элемента</span><br />
+            const slider = document.querySelector(<span class="value"
+              >'zh-mr-slider'</span
+            >);<br /><br />
+
+            <span class="comment">// Получить текущие значения</span><br />
+            const values = slider.<span class="attribute">currentValues</span
+            >;<br />
+            <span class="comment">// или</span><br />
+            const values = slider.<span class="attribute">getCurrentValues</span
+            >();<br /><br />
+
+            <span class="comment">// Установить новые значения</span><br />
+            slider.<span class="attribute">setValues</span>([10, 30, 70,
+            90]);<br /><br />
+
+            <span class="comment">// Добавить бегунок</span><br />
+            slider.<span class="attribute">addThumb</span>(50);<br /><br />
+
+            <span class="comment">// Удалить бегунок</span><br />
+            slider.<span class="attribute">removeThumb</span>(0);<br /><br />
+
+            <span class="comment">// Слушать события</span><br />
+            slider.<span class="attribute">addEventListener</span>(<span
+              class="value"
+              >'change'</span
+            >, (e) => {<br />
+            &nbsp;&nbsp;console.log(<span class="value">'Новые значения:'</span
+            >, e.detail.values);<br />
+            });
+          </code>
         </div>
-        
-        <div id="api" class="tab-content">
-            <h3>JavaScript API</h3>
-            <div class="code-block">
-                <code>
-                    <span class="comment">// Получение элемента</span><br>
-                    const slider = document.querySelector(<span class="value">'zh-mr-slider'</span>);<br><br>
-                    
-                    <span class="comment">// Получить текущие значения</span><br>
-                    const values = slider.<span class="attribute">currentValues</span>;<br>
-                    <span class="comment">// или</span><br>
-                    const values = slider.<span class="attribute">getCurrentValues</span>();<br><br>
-                    
-                    <span class="comment">// Установить новые значения</span><br>
-                    slider.<span class="attribute">setValues</span>([10, 30, 70, 90]);<br><br>
-                    
-                    <span class="comment">// Добавить бегунок</span><br>
-                    slider.<span class="attribute">addThumb</span>(50);<br><br>
-                    
-                    <span class="comment">// Удалить бегунок</span><br>
-                    slider.<span class="attribute">removeThumb</span>(0);<br><br>
-                    
-                    <span class="comment">// Слушать события</span><br>
-                    slider.<span class="attribute">addEventListener</span>(<span class="value">'change'</span>, (e) => {<br>
-                    &nbsp;&nbsp;console.log(<span class="value">'Новые значения:'</span>, e.detail.values);<br>
-                    });
-                </code>
-            </div>
+      </div>
+
+      <div id="examples" class="tab-content">
+        <h3>CSS Кастомизация</h3>
+        <div class="code-block">
+          <code>
+            <span class="comment">/* Кастомизация через CSS переменные */</span
+            ><br />
+            zh-mr-slider {<br />
+            &nbsp;&nbsp;<span class="attribute">--range-color</span>:
+            <span class="value">#ff6b6b</span>;<br />
+            &nbsp;&nbsp;<span class="attribute">--thumb-border-color</span>:
+            <span class="value">#ff6b6b</span>;<br />
+            &nbsp;&nbsp;<span class="attribute">--track-height</span>:
+            <span class="value">8px</span>;<br />
+            &nbsp;&nbsp;<span class="attribute">--thumb-size</span>:
+            <span class="value">24px</span>;<br />
+            &nbsp;&nbsp;<span class="attribute">--track-color</span>:
+            <span class="value">#e0e0e0</span>;<br />
+            &nbsp;&nbsp;<span class="attribute">--thumb-color</span>:
+            <span class="value">white</span>;<br />
+            }
+          </code>
         </div>
-        
-        <div id="examples" class="tab-content">
-            <h3>CSS Кастомизация</h3>
-            <div class="code-block">
-                <code>
-                    <span class="comment">/* Кастомизация через CSS переменные */</span><br>
-                    zh-mr-slider {<br>
-                    &nbsp;&nbsp;<span class="attribute">--range-color</span>: <span class="value">#ff6b6b</span>;<br>
-                    &nbsp;&nbsp;<span class="attribute">--thumb-border-color</span>: <span class="value">#ff6b6b</span>;<br>
-                    &nbsp;&nbsp;<span class="attribute">--track-height</span>: <span class="value">8px</span>;<br>
-                    &nbsp;&nbsp;<span class="attribute">--thumb-size</span>: <span class="value">24px</span>;<br>
-                    &nbsp;&nbsp;<span class="attribute">--track-color</span>: <span class="value">#e0e0e0</span>;<br>
-                    &nbsp;&nbsp;<span class="attribute">--thumb-color</span>: <span class="value">white</span>;<br>
-                    }
-                </code>
-            </div>
-        </div>
+      </div>
     </div>
 
     <footer>
-        <p>© 2024 Zaviruha Multiple Range Slider | Web Component Demo</p>
-        <p>Лицензия MIT | Подробности на <a href="https://github.com/zaviruha/mrslider" style="color: #3498db;">GitHub</a></p>
+      <p>© 2024 Zaviruha Multiple Range Slider | Web Component Demo</p>
+      <p>
+        Лицензия MIT | Подробности на
+        <a href="https://github.com/zaviruha/mrslider" style="color: #3498db"
+          >GitHub</a
+        >
+      </p>
     </footer>
 
     <script type="module">
-        // Импортируем основной компонент
-        import { MultipleRangeSlider } from './src/MultipleRangeSlider.js';
+      // Импортируем основной компонент
+      import { MultipleRangeSlider } from "./src/MultipleRangeSlider.js";
     </script>
     <script src="./ghpage/script.js?v=1.0"></script>
     <script src="./ghpage/theme.js?v=1.0"></script>
-</body>
+  </body>
 </html>
