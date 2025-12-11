@@ -7,9 +7,10 @@
 ### Вариант 1: Использование через CDN
 
 ```html
-<script type="module">
-  import { MultipleRangeSlider } from "https://cdn.jsdelivr.net/gh/zaviruha/mrslider@master/src/MultipleRangeSlider.js";
-</script>
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/gh/zaviruha/mrslider@master/src/MultipleRangeSlider.js"
+></script>
 ```
 
 ### Вариант 2: Локальная установка
